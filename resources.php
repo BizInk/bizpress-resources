@@ -92,13 +92,17 @@ function bizink_resources_init(){
 	$post = bizink_get_resources_page_object();
 	if( is_object( $post ) && get_post_type( $post ) == "page" ){
 		add_rewrite_tag('%'.$post->post_name.'%', '([^&]+)', 'bizpress=');
-		add_rewrite_rule('^'.$post->post_name . '/([^/]+)/?$','index.php?pagename=resources&bizpress=$matches[1]','top');
-		add_rewrite_rule("^".$post->post_name."/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&bizpress=$matches[1]','top');
+		add_rewrite_tag('%'.$post->post_name.'%', '([^&]+)', 'resource=');
+		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&resource=$matches[1]','top');
+		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&type=$matches[1]&bizpress=$matches[2]','top');
 
-		add_rewrite_rule("^".$post->post_name."/([a-z0-9-]+)/([a-z0-9-]+)[/]?$" ,'index.php?pagename=resources&type=$matches[1]&topic=$matches[2]','top');
+		//add_rewrite_rule('^'.$post->post_name . '/([^/]+)/?$','index.php?pagename=resources&bizpress=$matches[1]','top');
+		//add_rewrite_rule("^".$post->post_name."/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&bizpress=$matches[1]','top');
 
-		add_rewrite_rule("^".$post->post_name."/topic/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&topic=$matches[1]','top');
-		add_rewrite_rule("^".$post->post_name."/type/([a-z0-9-]+)[/]?$" ,'index.php?pagename=resources&type=$matches[1]','top');
+		//add_rewrite_rule("^".$post->post_name."/([a-z0-9-]+)/([a-z0-9-]+)[/]?$" ,'index.php?pagename=resources&type=$matches[1]&topic=$matches[2]','top');
+
+		//add_rewrite_rule("^".$post->post_name."/topic/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&topic=$matches[1]','top');
+		//add_rewrite_rule("^".$post->post_name."/type/([a-z0-9-]+)[/]?$" ,'index.php?pagename=resources&type=$matches[1]','top');
 		
 		//flush_rewrite_rules();
 	}
@@ -107,17 +111,31 @@ function bizink_resources_init(){
 add_filter('query_vars', 'bizpress_resources_qurey');
 function bizpress_resources_qurey($vars) {
     $vars[] = "bizpress";
+	$vars[] = "resource";
+	$vars[] = "bizpressxml";
     return $vars;
 }
 
-add_filter( 'cx_account_post_url', 'cxa_filter_resources_glossary_post_url', 10, 2 );
-function cxa_filter_resources_glossary_post_url( $url, $post){
-	if($post->type == 'resources-glossary'){
-		$page = bizink_get_resources_page_glossary();
-		if( isset( $post ) ){
-			return get_permalink( $page ).$post->slug;
-		}
-		return $url;
-	}
-	return $url;
+function bizpress_resources_sitemap_custom_items( $sitemap_custom_items ) {
+    $sitemap_custom_items .= '
+	<sitemap>
+		<loc>'.get_home_url().'/resources.xml</loc>
+	</sitemap>';
+    return $sitemap_custom_items;
 }
+
+add_filter( 'wpseo_sitemap_index', 'bizpress_resources_sitemap_custom_items' );
+
+function bizpress_resources_content_manager_fields($fields){
+	$data = null;
+	if(function_exists('bizink_get_content')){
+		$data = bizink_get_content( 'resources', 'topics' );
+	}
+	$fields['resources'] = array(
+		'id' => 'resources',
+		'label'	=> __( 'Resources', 'bizink-client' ),
+		'posts' => $data ? $data->posts : array(),
+	);
+	return $fields;
+}
+add_filter('bizpress_content_manager_fields','bizpress_resources_content_manager_fields');
