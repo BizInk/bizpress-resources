@@ -94,7 +94,7 @@ function bizink_resources_init(){
 		add_rewrite_tag('%'.$post->post_name.'%', '([^&]+)', 'bizpress=');
 		add_rewrite_tag('%'.$post->post_name.'%', '([^&]+)', 'resource=');
 		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&resource=$matches[1]','top');
-		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&type=$matches[1]&bizpress=$matches[2]','top');
+		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&resource=$matches[1]&bizpress=$matches[2]','top');
 
 		//add_rewrite_rule('^'.$post->post_name . '/([^/]+)/?$','index.php?pagename=resources&bizpress=$matches[1]','top');
 		//add_rewrite_rule("^".$post->post_name."/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&bizpress=$matches[1]','top');
