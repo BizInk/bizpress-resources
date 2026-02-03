@@ -92,9 +92,9 @@ function bizink_resources_init(){
 	$post = bizink_get_resources_page_object();
 	if( is_object( $post ) && get_post_type( $post ) == "page" ){
 		add_rewrite_tag('%'.$post->post_name.'%', '([^&]+)', 'bizpress=');
-		add_rewrite_tag('%'.$post->post_name.'%', '([^&]+)', 'resource=');
-		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&resource=$matches[1]','top');
-		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&resource=$matches[1]&bizpress=$matches[2]','top');
+		add_rewrite_tag('%'.$post->post_name.'%', '([^&]+)', 'resources=');
+		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&resources=$matches[1]','top');
+		add_rewrite_rule("^".$post->post_name."\/([a-z0-9-]+)\/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&resources=$matches[1]&bizpress=$matches[2]','top');
 
 		//add_rewrite_rule('^'.$post->post_name . '/([^/]+)/?$','index.php?pagename=resources&bizpress=$matches[1]','top');
 		//add_rewrite_rule("^".$post->post_name."/([a-z0-9-]+)[/]?$",'index.php?pagename=resources&bizpress=$matches[1]','top');
@@ -111,7 +111,7 @@ function bizink_resources_init(){
 add_filter('query_vars', 'bizpress_resources_qurey');
 function bizpress_resources_qurey($vars) {
     $vars[] = "bizpress";
-	$vars[] = "resource";
+	$vars[] = "resources";
 	$vars[] = "bizpressxml";
     return $vars;
 }
